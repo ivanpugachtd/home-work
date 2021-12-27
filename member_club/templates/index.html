@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %} member's club {% endblock %}
+{% block content %}
+    <div>
+        <h5> New member </h5>
+    </div>
+    <form class="col-md-8">
+        <div class="form-group row w-25 p-25">
+          <label for="nameInputField" class="form-label">Name:</label>
+          <input type="text" class="form-control" id="nameInputField" name="nameInputField" placeholder="Jack Sparrow.">
+        </div>
+        <div class="form-group row w-25 p-25">
+          <label for="emailInputField" class="form-label">Email address:</label>
+          <input type="email" class="form-control" id="emailInputField" name="emailInputField" placeholder="name@example.com">
+        </div>
+        <div class="d-grid gap-2 d-md-block">
+           <button type="button" class="btn btn-outline-dark" id="add" name="add">Add</button>
+            <button type="button" class="btn btn-outline-dark" id="clear">Clear</button>
+        </div>
+    </form>
+    <div>
+        <h3> Members </h3>
+    </div>
+    <table id="membersTable" class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Registration date</th>
+            </tr>
+        </thead>
+      <tbody>
+        {% for member in members %}
+        <tr>
+          <td>{{ member.index }}</td>
+          <td>{{ member.name }}</td>
+          <td>{{ member.email }}</td>
+          <td>{{ member.registration_date }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}
+{% block scripts %}
+      <script>
+        $('#clear').click(function(){
+            $('#nameInputField').val("");
+            $('#emailInputField').val("");
+        });
+        $('#add').click(function(){
+            var newMember = {
+                name:$('#nameInputField').val(),
+                email:$('#emailInputField').val()
+            }
+            $.ajax({
+                url:'/member',
+                method:'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data:JSON.stringify(newMember),
+                success: function (data) {
+                        alert(data);
+                        location.reload();
+                    },
+                error: function (xhr, ajaxOptions, thrownError) {
+                        alert(xhr.responseText.replace(/\"/g, ""));
+                    }
+                });
+            });
+      </script>
+    {% endblock %}
